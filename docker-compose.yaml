@@ -1,0 +1,51 @@
+services:
+  docker:
+    container_name: jenkins-docker
+    image: docker:dind
+    privileged: true
+    environment:
+      - DOCKER_TLS_CERTDIR=/certs
+    volumes:
+      - jenkins-docker-certs:/certs/client
+      - jenkins-data:/var/jenkins_home
+    ports:
+      - 2376:2376
+    networks:
+      jenkins:
+        aliases:
+          - docker
+    command: --storage-driver overlay2
+  jenkins-blueocean:
+    container_name: jenkins-blueocean
+    build:
+      context: .
+      dockerfile: Dockerfile.blueocean
+    restart: on-failure
+    networks:
+      - jenkins
+    environment:
+      - DOCKER_HOST=tcp://docker:2376
+      - DOCKER_CERT_PATH=/certs/client
+      - DOCKER_TLS_VERIFY=1
+    ports:
+      - 9090:8080
+      - 50000:50000
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - jenkins-docker-certs:/certs/client:ro
+      - /home/aa/.docker:/etc/docker/certs.d:ro
+  ata-dind-java:
+    container_name: ata-dind-java
+    build:
+      context: .
+      dockerfile: Dockerfile.dind-java
+    networks:
+      - jenkins
+networks:
+  jenkins:
+    name: jenkins
+volumes:
+  jenkins-docker-certs:
+    name: jenkins-docker-certs
+  jenkins-data:
+    name: jenkins-data

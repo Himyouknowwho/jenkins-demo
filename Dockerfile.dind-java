@@ -1,0 +1,9 @@
+FROM docker:27.5.1-dind 
+ARG ALPINE_TAG=3.21.2
+ARG JAVA_VERSION=21.0.5_11
+ARG TARGETPLATFORM
+
+# Install system dependencies
+RUN apk update 
+RUN apk add --no-cache ca-certificates git curl rpm python3 nodejs npm openjdk21
+RUN update-ca-certificates
