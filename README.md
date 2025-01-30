@@ -14,4 +14,4 @@ You can use this command to extract it:
 ```
 docker exec jenkins-blueocean-demo cat /var/jenkins_home/secrets/initialAdminPassword
 ```
-And paste it in
+And paste it in to the textfield in the browser.
